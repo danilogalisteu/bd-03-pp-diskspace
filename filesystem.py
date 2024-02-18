@@ -16,6 +16,9 @@ class DirEntry():
         self.mode = dstat.st_mode
         self.mtime = dstat.st_mtime
         self.children = self._file_scan_r(follow_symlinks=follow_symlinks) if self.is_dir else None
+        self.total_size = dstat.st_size
+        if self.is_dir:
+            self.total_size += sum(c.total_size for c in self.children)
 
     def get_mode_str(self):
         return stat.filemode(self.mode)
@@ -30,7 +33,7 @@ class DirEntry():
         ]
 
     def get_info(self):
-        return self.size, self.get_mode_str(), self.get_mtime_str()
+        return self.size, self.total_size, self.get_mode_str(), self.get_mtime_str()
 
     def get_tree_info_r(self):
         if not self.is_dir:
