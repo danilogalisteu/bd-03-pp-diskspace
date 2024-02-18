@@ -41,7 +41,7 @@ class Window():
 
         self.frame2 = ttk.Frame(self.window)
 
-        self.tree_view = ttk.Treeview(self.frame2, height=30, selectmode='none', columns=['size', 'total', 'mode', 'mtime'])
+        self.tree_view = ttk.Treeview(self.frame2, height=30, selectmode='none', columns=['size', 'total', 'percent', 'mode', 'mtime'])
         self.tree_view.pack(side='left', padx=[10, 0], pady=10)
         self.tree_view.column('#0', width=400, anchor='w')
         self.tree_view.heading('#0', text='Path')
@@ -49,6 +49,8 @@ class Window():
         self.tree_view.heading('size', text='Size')
         self.tree_view.column('total', minwidth=100, anchor='e')
         self.tree_view.heading('total', text='Total size')
+        self.tree_view.column('percent', minwidth=40, anchor='e')
+        self.tree_view.heading('percent', text='Percent of parent size')
         self.tree_view.column('mode', minwidth=80, anchor='w')
         self.tree_view.heading('mode', text='Mode')
         self.tree_view.column('mtime', minwidth=200, anchor='w')
