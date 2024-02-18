@@ -27,10 +27,14 @@ class DirEntry():
         return datetime.datetime.fromtimestamp(self.mtime).strftime("%Y-%m-%d %H:%M:%S.%f")
     
     def _file_scan_r(self, follow_symlinks=False):
-        return [
-            DirEntry(fn, follow_symlinks=follow_symlinks)
-            for fn in os.scandir(self.path)
-        ]
+        children = []
+        try:
+            for fn in os.scandir(self.path):
+                children.append(DirEntry(fn, follow_symlinks=follow_symlinks))
+        except PermissionError as e:
+            print(f"PermissionError: {e}")
+        return children
+
 
     def get_info(self):
         return self.size, self.total_size, self.get_mode_str(), self.get_mtime_str()
