@@ -41,7 +41,7 @@ class DirEntry():
         return (
             self.size,
             self.total_size,
-            100.0 * self.total_size / self.parent.total_size if self.parent is not None else 100.0,
+            100.0 * self.total_size / self.parent.total_size if self.parent is not None and self.parent.total_size > 0 else 100.0,
             self.get_mode_str(),
             self.get_mtime_str()
         )
