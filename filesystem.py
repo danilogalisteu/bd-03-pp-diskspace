@@ -7,7 +7,8 @@ import pathlib
 
 
 class DirEntry():
-    def __init__(self, dir_entry, follow_symlinks=False):
+    def __init__(self, dir_entry, parent=None, follow_symlinks=False):
+        self.parent = parent
         self.name = dir_entry.name
         self.path = dir_entry if isinstance(dir_entry, pathlib.Path) else dir_entry.path
         self.is_dir = dir_entry.is_dir() and (follow_symlinks or not dir_entry.is_symlink())
@@ -30,14 +31,20 @@ class DirEntry():
         children = []
         try:
             for fn in os.scandir(self.path):
-                children.append(DirEntry(fn, follow_symlinks=follow_symlinks))
+                children.append(DirEntry(fn, self, follow_symlinks=follow_symlinks))
         except PermissionError as e:
             print(f"PermissionError: {e}")
         return children
 
 
     def get_info(self):
-        return self.size, self.total_size, self.get_mode_str(), self.get_mtime_str()
+        return (
+            self.size,
+            self.total_size,
+            100.0 * self.total_size / self.parent.total_size if self.parent is not None else 100.0,
+            self.get_mode_str(),
+            self.get_mtime_str()
+        )
 
     def get_tree_info_r(self):
         if not self.is_dir:
