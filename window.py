@@ -85,4 +85,17 @@ class Window():
 
     def _scan_folder(self):
         self.dir_entry = DirEntry(self.base_path)
-        print(self.dir_entry.get_tree_info_r())
+        self._fill_tree_view(self.dir_entry)
+
+    def _fill_tree_view(self, dir_entry):
+        self.tree_view.delete(*self.tree_view.get_children())
+        self._fill_tree_view_r('', dir_entry)
+
+    def _fill_tree_view_r(self, root_id, dir_entry):
+        text_label = self.base_path if root_id == '' else dir_entry.name
+        if dir_entry.is_dir:
+            dir_node = self.tree_view.insert(root_id, 'end', text=text_label, open=True, values=dir_entry.get_info())
+            for entry in dir_entry.children:
+                self._fill_tree_view_r(dir_node, entry)
+        else:
+            file_node = self.tree_view.insert(root_id, 'end', text=text_label, open=False, values=dir_entry.get_info())
