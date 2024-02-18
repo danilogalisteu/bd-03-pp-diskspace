@@ -20,29 +20,45 @@ class Window():
         # self.window.geometry(f"{width}x{height}")
         self.window.protocol("WM_DELETE_WINDOW", self.close)
 
-        self.frame = ttk.Frame(self.window)
+        self.frame1 = ttk.Frame(self.window)
 
-        self.select_label = ttk.Label(self.frame, text="Base folder:", width=10)
-        self.select_label.grid(column=0, row=0, padx=5, pady=10)
+        self.select_label = ttk.Label(self.frame1, text="Base folder:", width=10)
+        self.select_label.grid(column=0, row=0, padx=10, pady=10)
 
-        self.text_entry = tk.StringVar(self.frame, value=str(self.base_path))
-        self.select_entry = ttk.Entry(self.frame, textvariable=self.text_entry, width=50, state='readonly')
-        self.select_entry.grid(column=1, row=0, padx=5, pady=10)
+        self.text_entry = tk.StringVar(self.frame1, value=str(self.base_path))
+        self.select_entry = ttk.Entry(self.frame1, textvariable=self.text_entry, width=100, state='readonly')
+        self.select_entry.grid(column=1, row=0, padx=10, pady=10)
 
-        self.select_button = ttk.Button(self.frame, text="Select base folder", width=16, command=self._select_folder)
-        self.select_button.grid(column=2, row=0, padx=5, pady=10)
+        self.select_button = ttk.Button(self.frame1, text="Select base folder", width=16, command=self._select_folder)
+        self.select_button.grid(column=2, row=0, padx=10, pady=10)
         self.select_button.focus()
 
-        self.scan_button = ttk.Button(self.frame, text="Scan folder", width=12, command=self._scan_folder)
-        self.scan_button.grid(column=3, row=0, padx=5, pady=10)
+        self.scan_button = ttk.Button(self.frame1, text="Scan folder", width=12, command=self._scan_folder)
+        self.scan_button.grid(column=3, row=0, padx=10, pady=10)
 
-        self.tree_view = ttk.Treeview(self.frame, height=20, selectmode='none', columns=['Size', 'Mode', 'Modified time'])
-        self.tree_view.grid(column=0, row=1, columnspan=4, padx=10, pady=10)
+        self.frame1.columnconfigure(1, weight=1)
+        self.frame1.pack(fill="both", expand=True)
 
-        self.frame.columnconfigure(1, weight=1)
-        self.frame.rowconfigure(1, weight=1)
+        self.frame2 = ttk.Frame(self.window)
 
-        self.frame.pack(fill="both", expand=True)
+        self.tree_view = ttk.Treeview(self.frame2, height=30, selectmode='none', columns=['size', 'total', 'mode', 'mtime'])
+        self.tree_view.pack(side='left', padx=[10, 0], pady=10)
+        self.tree_view.column('#0', width=400, anchor='w')
+        self.tree_view.heading('#0', text='Path')
+        self.tree_view.column('size', minwidth=100, anchor='e')
+        self.tree_view.heading('size', text='Size')
+        self.tree_view.column('total', minwidth=100, anchor='e')
+        self.tree_view.heading('total', text='Total size')
+        self.tree_view.column('mode', minwidth=80, anchor='w')
+        self.tree_view.heading('mode', text='Mode')
+        self.tree_view.column('mtime', minwidth=200, anchor='w')
+        self.tree_view.heading('mtime', text='Modified time')
+
+        vsb = ttk.Scrollbar(self.frame2, orient="vertical", command=self.tree_view.yview)
+        vsb.pack(side='right', fill='y', padx=[0, 10], pady=10)
+        self.tree_view.configure(yscrollcommand=vsb.set)
+
+        self.frame2.pack(fill="both", expand=True)
     
     def redraw(self):
         self.window.update_idletasks()
