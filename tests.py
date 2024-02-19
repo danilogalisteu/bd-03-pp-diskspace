@@ -49,6 +49,30 @@ class DirEntryTests(unittest.TestCase):
             entry.children,
             list
         )
+    
+    def test_dir_entry_methods(self):
+        base_path = pathlib.Path('.')
+        entry = DirEntry(base_path)
+
+        self.assertIsInstance(
+            entry.get_mode_str(),
+            str
+        )
+        self.assertTrue(
+            entry.get_mode_str().startswith('d')
+        )
+        self.assertIsInstance(
+            entry.get_mtime_str(),
+            str
+        )
+        self.assertIsInstance(
+            entry.get_info(),
+            tuple
+        )
+        self.assertIsInstance(
+            entry.get_tree_info_r(),
+            dict
+        )
 
 
 if __name__ == "__main__":
