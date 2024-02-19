@@ -87,7 +87,7 @@ class Window():
 
     def _scan_folder(self):
         self.dir_entry = DirEntry(self.base_path)
-        self._fill_tree_view(self.dir_entry)
+        self._fill_tree_view()
 
     def _parse_entry_info(self, dir_entry):
         entry_size, total_size, parent_size, mode_str, mtime_str = dir_entry.get_info()
@@ -100,9 +100,9 @@ class Window():
             mtime_str,
         )
 
-    def _fill_tree_view(self, dir_entry):
+    def _fill_tree_view(self):
         self.tree_view.delete(*self.tree_view.get_children())
-        self._fill_tree_view_r('', dir_entry)
+        self._fill_tree_view_r('', self.dir_entry)
 
     def _fill_tree_view_r(self, root_id, dir_entry):
         text_label = self.base_path if root_id == '' else dir_entry.name
