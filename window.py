@@ -78,7 +78,7 @@ class Window():
         base_path = filedialog.askdirectory(
             parent=self.window,
             title="Select base path",
-            initialdir=pathlib.Path.home(),
+            initialdir=self.base_path,
             mustexist=True
         )
         if base_path:
