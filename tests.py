@@ -23,6 +23,10 @@ class DirEntryTests(unittest.TestCase):
             entry.path,
             base_path
         )
+        self.assertEqual(
+            sorted([e.name for e in entry.children]),
+            sorted([p.name for p in base_path.iterdir()])
+        )
         self.assertTrue(
             entry.is_dir
         )
