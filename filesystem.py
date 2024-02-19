@@ -34,7 +34,7 @@ class DirEntry():
                 children.append(DirEntry(fn, self, follow_symlinks=follow_symlinks))
         except PermissionError as e:
             print(f"PermissionError: {e}")
-        return children
+        return sorted(children, key=lambda x: x.total_size, reverse=True)
 
 
     def get_info(self):
