@@ -32,8 +32,8 @@ class DirEntry():
         try:
             for fn in os.scandir(self.path):
                 children.append(DirEntry(fn, self, follow_symlinks=follow_symlinks))
-        except PermissionError as e:
-            print(f"PermissionError: {e}")
+        except Exception as e:
+            print(f"{type(e).__name__}: {e}")
         return sorted(children, key=lambda x: x.total_size, reverse=True)
 
 
