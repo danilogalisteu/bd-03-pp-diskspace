@@ -49,8 +49,8 @@ class Window():
         self.tree_view.heading('size', text='Size')
         self.tree_view.column('total', minwidth=100, anchor='e')
         self.tree_view.heading('total', text='Total size')
-        self.tree_view.column('percent', minwidth=40, anchor='e')
-        self.tree_view.heading('percent', text='Percent of parent size')
+        self.tree_view.column('percent', minwidth=100, anchor='e')
+        self.tree_view.heading('percent', text='% of parent size')
         self.tree_view.column('mode', minwidth=80, anchor='w')
         self.tree_view.heading('mode', text='Mode')
         self.tree_view.column('mtime', minwidth=200, anchor='w')
@@ -89,6 +89,17 @@ class Window():
         self.dir_entry = DirEntry(self.base_path)
         self._fill_tree_view(self.dir_entry)
 
+    def _parse_entry_info(self, dir_entry):
+        entry_size, total_size, parent_size, mode_str, mtime_str = dir_entry.get_info()
+        percent_parent = total_size / parent_size if parent_size > 0 else 1
+        return (
+            f"{entry_size:,}",
+            f"{total_size:,}",
+            f"{percent_parent:.2%}",
+            mode_str,
+            mtime_str,
+        )
+
     def _fill_tree_view(self, dir_entry):
         self.tree_view.delete(*self.tree_view.get_children())
         self._fill_tree_view_r('', dir_entry)
@@ -96,8 +107,8 @@ class Window():
     def _fill_tree_view_r(self, root_id, dir_entry):
         text_label = self.base_path if root_id == '' else dir_entry.name
         if dir_entry.is_dir:
-            dir_node = self.tree_view.insert(root_id, 'end', text=text_label, open=True, values=dir_entry.get_info())
+            dir_node = self.tree_view.insert(root_id, 'end', text=text_label, open=True, values=self._parse_entry_info(dir_entry))
             for entry in dir_entry.children:
                 self._fill_tree_view_r(dir_node, entry)
         else:
-            file_node = self.tree_view.insert(root_id, 'end', text=text_label, open=False, values=dir_entry.get_info())
+            file_node = self.tree_view.insert(root_id, 'end', text=text_label, open=False, values=self._parse_entry_info(dir_entry))
