@@ -41,8 +41,8 @@ class Window():
 
         self.frame2 = ttk.Frame(self.window)
 
-        self.tree_view = ttk.Treeview(self.frame2, height=30, selectmode='none', columns=['size', 'total', 'percent', 'mode', 'mtime'])
-        self.tree_view.pack(side='left', padx=[10, 0], pady=10)
+        self.tree_view = ttk.Treeview(self.frame2, height=40, selectmode='none', columns=['size', 'total', 'percent', 'mode', 'mtime'])
+        self.tree_view.pack(side='left', fill='both', expand=True, padx=[10, 0], pady=10)
         self.tree_view.column('#0', width=400, anchor='w')
         self.tree_view.heading('#0', text='Path')
         self.tree_view.column('size', minwidth=100, anchor='e')
@@ -56,11 +56,23 @@ class Window():
         self.tree_view.column('mtime', minwidth=200, anchor='w')
         self.tree_view.heading('mtime', text='Modified time')
 
-        vsb = ttk.Scrollbar(self.frame2, orient="vertical", command=self.tree_view.yview)
-        vsb.pack(side='right', fill='y', padx=[0, 10], pady=10)
-        self.tree_view.configure(yscrollcommand=vsb.set)
+        self.tree_vsb = ttk.Scrollbar(self.frame2, orient="vertical", command=self.tree_view.yview)
+        self.tree_vsb.pack(side='right', fill='y', padx=[0, 10], pady=10)
+        self.tree_view.configure(yscrollcommand=self.tree_vsb.set)
 
         self.frame2.pack(fill="both", expand=True)
+
+        self.frame3 = ttk.Frame(self.window)
+
+        self.text_log = tk.Text(self.frame3, height=10)
+        self.text_log['state'] = 'disabled'
+        self.text_log.pack(side='left', fill='both', expand=True, padx=[10, 0], pady=10)
+
+        self.log_vsb = ttk.Scrollbar(self.frame3, orient="vertical", command=self.text_log.yview)
+        self.log_vsb.pack(side='right', fill='y', padx=[0, 10], pady=10)
+        self.text_log.configure(yscrollcommand=self.log_vsb.set)
+
+        self.frame3.pack(fill="both", expand=True)
     
     def redraw(self):
         self.window.update_idletasks()
@@ -74,6 +86,12 @@ class Window():
     def close(self):
         self.running = False
 
+    def append_log(self, text):
+        self.text_log['state'] = 'normal'
+        self.text_log.insert(tk.END, text + '\n')
+        self.text_log['state'] = 'disabled'
+        self.text_log.see(tk.END)
+
     def _select_folder(self):
         base_path = filedialog.askdirectory(
             parent=self.window,
@@ -86,7 +104,7 @@ class Window():
             self.text_entry.set(str(self.base_path))
 
     def _scan_folder(self):
-        self.dir_entry = DirEntry(self.base_path)
+        self.dir_entry = DirEntry(self.base_path, self)
         self.tree_view.delete(*self.tree_view.get_children())
         self._fill_tree_view_r('', self.dir_entry)
 
